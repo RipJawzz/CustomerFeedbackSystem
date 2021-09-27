@@ -11,14 +11,8 @@ if ENV == 'dev':
     application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db= SQLAlchemy(application)
 else:
-    '''application.config['MYSQL_HOST'] = 'feedback2.cxnsb6fwzses.us-east-1.rds.amazonaws.com'
-    application.config['MYSQL_USER'] = 'admin'
-    application.config['MYSQL_PASSWORD'] = 'feedback'
-    application.config['MYSQL_DB'] = 'flask_app'
-    '''
     application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:feedback@feedback2.cxnsb6fwzses.us-east-1.rds.amazonaws.com/flask_app'
     application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    #db = MySQLdb.connect(host="feedbackdb.cxnsb6fwzses.us-east-1.rds.amazonaws.com",port=3306,user="admin",passwd="feedback",db="flask_app",autocommit=True,use_unicode=True)
     application.debug = False
     db = SQLAlchemy(application)
 
@@ -51,26 +45,13 @@ def submit():
         comments=request.form['comments']
         if customer=='' or  dealer=='':
             return render_template('index.html', message='Please fill required fields')
-        #PostGres
         #if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0:
         data = Feedback(customer,dealer,rating,comments)
         db.session.add(data)
         db.session.commit()
         send_mail(customer,dealer,rating,comments)
         return  render_template('success.html')
-        
-        #MYSQL
-        #conn = mysql.connect()
-        #conn.execute(''' INSERT INTO feedback VALUES(%s,%s,%s,%s)''',(customer,dealer,rating,comments))
-        '''conn.commit()
-        send_mail(customer,dealer,rating,comments)
-        conn.close()
-        '''
-        '''cursor = db.cursor()'''
-        #query = ''' INSERT INTO feedback VALUES(%s,%s,%s,%s)''',(customer,dealer,rating,comments)
-        '''cursor.execute(query)
-        languages = cursor.fetchall()
-        languages = [list(l) for l in languages]'''
+      
 
         return render_template('success.html',)
 
