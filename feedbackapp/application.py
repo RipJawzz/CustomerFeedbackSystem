@@ -3,23 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from send_mail import send_mail
 application=Flask(__name__)
 
-ENV = 'prod'
 
-if ENV == 'dev':
-    application.debug = True
-    application.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:013210@localhost/lexus'
-    application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db= SQLAlchemy(application)
-else:
-    application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:feedback@feedback2.cxnsb6fwzses.us-east-1.rds.amazonaws.com/flask_app'
-    application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    application.debug = False
-    db = SQLAlchemy(application)
+db_endpoint='feedback2.cxnsb6fwzses.us-east-1.rds.amazonaws.com'
+application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:feedback@'+db_endpoint+'/flask_app'
+application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+application.debug = False
+db = SQLAlchemy(application)
 
-
-
-
-#Postgresql init
 class Feedback(db.Model):
     __tablename__ = 'feedback'
     customer = db.Column(db.String(200),primary_key=True)
@@ -45,7 +35,6 @@ def submit():
         comments=request.form['comments']
         if customer=='' or  dealer=='':
             return render_template('index.html', message='Please fill required fields')
-        #if db.session.query(Feedback).filter(Feedback.customer == customer).count() == 0:
         data = Feedback(customer,dealer,rating,comments)
         db.session.add(data)
         db.session.commit()
