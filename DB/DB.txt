@@ -1,0 +1,5 @@
+mysql -h feedback2.cxnsb6fwzses.us-east-1.rds.amazonaws.com -P 3306 -u admin -p
+feedback
+CREATE DATABASE flask_app;
+USE flask_app;
+create table feedback(customer varchar(20),dealer varchar(20),rating integer(2),comments varchar(200));
